@@ -27,10 +27,25 @@ const createBoard = (rows, columns) => {
       });
       square.addEventListener('mousedown', handleClick);
 
+      square.addEventListener('touchstart', () => handleTouchStart(cell));
+      square.addEventListener('touchend', handleTouchEnd);
+
       grid.appendChild(square);
     }
   }
 };
+
+let longPressTimer;
+
+function handleTouchStart(cell) {
+  longPressTimer = setTimeout(() => {
+    flagCell(cell); // Function to toggle flag on the cell
+  }, 500); // Adjust timing as needed
+}
+
+function handleTouchEnd() {
+  clearTimeout(longPressTimer);
+}
 
 const setRandomMines = (numberOfMines, rows, columns) => {
   let count = 0;
