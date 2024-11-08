@@ -46,7 +46,8 @@ function handleTouchStart(square) {
       square.setAttribute('isFlag', 'false');
       numberOfFlags--;
     }
-  }, 500); // Adjust timing as needed
+  }, 300);
+  getLegend();
 }
 
 function handleTouchEnd() {
