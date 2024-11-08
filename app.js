@@ -37,27 +37,6 @@ const createBoard = (rows, columns) => {
   }
 };
 
-let longPressTimer;
-
-function handleTouchStart(square) {
-  longPressTimer = setTimeout(() => {
-    if (endOfGame) return;
-    if (square.getAttribute('isRevealed') === 'true') return;
-    if (square.getAttribute('isFlag') === 'false') {
-      square.setAttribute('isFlag', 'true');
-      numberOfFlags++;
-    } else {
-      square.setAttribute('isFlag', 'false');
-      numberOfFlags--;
-    }
-    getLegend();
-  }, 300);
-}
-
-function handleTouchEnd() {
-  clearTimeout(longPressTimer);
-}
-
 const setRandomMines = (numberOfMines, rows, columns) => {
   let count = 0;
   while (count < numberOfMines) {
@@ -160,15 +139,34 @@ const handleClick = (e) => {
     }
   }
   if (e.button === 2) {
-    if (e.target.getAttribute('isFlag') === 'false') {
-      e.target.setAttribute('isFlag', 'true');
-      numberOfFlags++;
-    } else {
-      e.target.setAttribute('isFlag', 'false');
-      numberOfFlags--;
-    }
+    flagTheSquare(e.currentTarget);
   }
   getLegend();
+};
+
+let longPressTimer;
+
+function handleTouchStart(square) {
+  longPressTimer = setTimeout(() => {
+    if (endOfGame) return;
+    if (square.getAttribute('isRevealed') === 'true') return;
+    flagTheSquare(square);
+    getLegend();
+  }, 300);
+}
+
+function handleTouchEnd() {
+  clearTimeout(longPressTimer);
+}
+
+const flagTheSquare = (square) => {
+  if (square.getAttribute('isFlag') === 'false') {
+    square.setAttribute('isFlag', 'true');
+    numberOfFlags++;
+  } else {
+    square.setAttribute('isFlag', 'false');
+    numberOfFlags--;
+  }
 };
 
 const isMine = (i, j) => {
