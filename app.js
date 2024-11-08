@@ -79,12 +79,12 @@ const calculateCounts = (rows, columns) => {
 const revealSquare = (i, j, rows, columns) => {
   const currentSquare = document.querySelector(`[row="${i}"][column="${j}"]`);
   if (isMine(i, j)) {
-    console.log('case 1.1 - isMine');
+    // console.log('case 1.1 - isMine');
     return;
   }
 
   if (currentSquare.getAttribute('isRevealed') === 'true') {
-    console.log('case 1.2 - isRevealed');
+    // console.log('case 1.2 - isRevealed');
     return;
   }
 
@@ -98,10 +98,10 @@ const revealSquare = (i, j, rows, columns) => {
   }
 
   if (currentSquare.getAttribute('counts') != '0') {
-    console.log('case 2 - counts is not 0');
+    // console.log('case 2 - counts is not 0');
     return;
   } else {
-    console.log('case 3 - counts is 0');
+    // console.log('case 3 - counts is 0');
     for (let dx = i - 1; dx <= i + 1; dx++) {
       for (let dy = j - 1; dy <= j + 1; dy++) {
         if (dx >= 0 && dx < rows && dy >= 0 && dy < columns) {
