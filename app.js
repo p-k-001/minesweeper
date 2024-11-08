@@ -27,7 +27,7 @@ const createBoard = (rows, columns) => {
       });
       square.addEventListener('mousedown', handleClick);
 
-      square.addEventListener('touchstart', () => handleTouchStart(cell));
+      square.addEventListener('touchstart', (e) => handleTouchStart(e.target));
       square.addEventListener('touchend', handleTouchEnd);
 
       grid.appendChild(square);
@@ -37,9 +37,15 @@ const createBoard = (rows, columns) => {
 
 let longPressTimer;
 
-function handleTouchStart(cell) {
+function handleTouchStart(square) {
   longPressTimer = setTimeout(() => {
-    flagCell(cell); // Function to toggle flag on the cell
+    if (square.getAttribute('isFlag') === 'false') {
+      square.setAttribute('isFlag', 'true');
+      numberOfFlags++;
+    } else {
+      square.setAttribute('isFlag', 'false');
+      numberOfFlags--;
+    }
   }, 500); // Adjust timing as needed
 }
 
