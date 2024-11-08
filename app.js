@@ -46,8 +46,8 @@ function handleTouchStart(square) {
       square.setAttribute('isFlag', 'false');
       numberOfFlags--;
     }
+    getLegend();
   }, 300);
-  getLegend();
 }
 
 function handleTouchEnd() {
