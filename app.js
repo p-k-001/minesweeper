@@ -1,9 +1,3 @@
-// const rows = 10;
-// const columns = 10;
-// const numberOfMines = 10;
-// const rowsIntermediate = 16;
-// const columnsIntermediate = 16;
-// const numberOfMinesIntermediate = 40;
 let numberOfRevealed = 0;
 let numberOfFlags = 0;
 let endOfGame = false;
@@ -151,7 +145,10 @@ const handleClick = (e, level) => {
         parseInt(e.currentTarget.getAttribute('column')),
         level
       );
-      if (numberOfRevealed === 90) {
+      if (
+        numberOfRevealed ===
+        level.rows * level.columns - level.numberOfMines
+      ) {
         result = 'You win';
         endOfGame = true;
       }
