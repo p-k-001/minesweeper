@@ -199,15 +199,16 @@ const startNewGame = () => {
   endOfGame = false;
   result = '';
 
+  initiateGame();
+};
+
+addEventListener('DOMContentLoaded', () => {
+  initiateGame();
+});
+
+const initiateGame = () => {
   createBoard(rows, columns);
   getLegend();
   setRandomMines(numberOfMines, rows, columns);
   calculateCounts(rows, columns);
 };
-
-addEventListener('DOMContentLoaded', () => {
-  createBoard(rows, columns);
-  getLegend();
-  setRandomMines(numberOfMines, rows, columns);
-  calculateCounts(rows, columns);
-});
