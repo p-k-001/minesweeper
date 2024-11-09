@@ -42,7 +42,7 @@ const createBoard = (level) => {
       });
 
       square.addEventListener('touchstart', (e) =>
-        handleTouchStart(e.currentTarget)
+        handleTouchStart(e.currentTarget, level)
       );
       square.addEventListener('touchend', handleTouchEnd);
 
