@@ -1,13 +1,20 @@
 .container {
-  width: 500px;
+  width: 700px;
   font-size: 25px;
   text-align: center;
   font-family: 'Roboto mono';
 }
 
-.grid {
+.grid-beginner {
   width: 400px;
   height: 400px;
+  background-color: grey;
+  display: flex;
+  flex-wrap: wrap;
+}
+.grid-intermediate {
+  width: 640px;
+  height: 640px;
   background-color: grey;
   display: flex;
   flex-wrap: wrap;
@@ -19,6 +26,9 @@ div.square {
   border: solid 2px rgb(173, 168, 168);
   border-style: groove;
   box-sizing: border-box;
+}
+div.square:hover[isRevealed='false'] {
+  background-color: #909090;
 }
 
 .legend {

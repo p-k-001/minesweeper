@@ -1,15 +1,33 @@
-const rows = 10;
-const columns = 10;
-const numberOfMines = 10;
+// const rows = 10;
+// const columns = 10;
+// const numberOfMines = 10;
+// const rowsIntermediate = 16;
+// const columnsIntermediate = 16;
+// const numberOfMinesIntermediate = 40;
 let numberOfRevealed = 0;
 let numberOfFlags = 0;
 let endOfGame = false;
 let result = '';
 
-const createBoard = (rows, columns) => {
-  const grid = document.querySelector('.grid');
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < columns; j++) {
+const Levels = {
+  BEGINNER: {
+    rows: 10,
+    columns: 10,
+    numberOfMines: 10,
+    gridClass: 'grid-beginner',
+  },
+  INTERMEDIATE: {
+    rows: 16,
+    columns: 16,
+    numberOfMines: 40,
+    gridClass: 'grid-intermediate',
+  },
+};
+
+const createBoard = (level) => {
+  const grid = document.querySelector(`.${level.gridClass}`);
+  for (let i = 0; i < level.rows; i++) {
+    for (let j = 0; j < level.columns; j++) {
       const square = document.createElement('div');
 
       square.classList.add('square');
@@ -25,7 +43,9 @@ const createBoard = (rows, columns) => {
       square.addEventListener('contextmenu', (e) => {
         e.preventDefault();
       });
-      square.addEventListener('mousedown', handleClick);
+      square.addEventListener('mousedown', (e) => {
+        handleClick(e, level);
+      });
 
       square.addEventListener('touchstart', (e) =>
         handleTouchStart(e.currentTarget)
@@ -37,11 +57,11 @@ const createBoard = (rows, columns) => {
   }
 };
 
-const setRandomMines = (numberOfMines, rows, columns) => {
+const setRandomMines = (level) => {
   let count = 0;
-  while (count < numberOfMines) {
-    const i = Math.floor(Math.random() * rows);
-    const j = Math.floor(Math.random() * columns);
+  while (count < level.numberOfMines) {
+    const i = Math.floor(Math.random() * level.rows);
+    const j = Math.floor(Math.random() * level.columns);
     const squareMine = document.querySelector(`[row="${i}"][column="${j}"]`);
     if (squareMine.getAttribute('isMine') === 'false') {
       squareMine.setAttribute('isMine', 'true');
@@ -50,9 +70,9 @@ const setRandomMines = (numberOfMines, rows, columns) => {
   }
 };
 
-const calculateCounts = (rows, columns) => {
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < columns; j++) {
+const calculateCounts = (level) => {
+  for (let i = 0; i < level.rows; i++) {
+    for (let j = 0; j < level.columns; j++) {
       const currentSquare = document.querySelector(
         `[row="${i}"][column="${j}"]`
       );
@@ -60,7 +80,7 @@ const calculateCounts = (rows, columns) => {
       if (currentSquare.getAttribute('isMine') === 'true') {
         for (let dx = i - 1; dx <= i + 1; dx++) {
           for (let dy = j - 1; dy <= j + 1; dy++) {
-            if (dx >= 0 && dx < rows && dy >= 0 && dy < columns) {
+            if (dx >= 0 && dx < level.rows && dy >= 0 && dy < level.columns) {
               const countedSquare = document.querySelector(
                 `[row="${dx}"][column="${dy}"]`
               );
@@ -81,7 +101,7 @@ const calculateCounts = (rows, columns) => {
   }
 };
 
-const revealSquare = (i, j, rows, columns) => {
+const revealSquare = (i, j, level) => {
   const currentSquare = document.querySelector(`[row="${i}"][column="${j}"]`);
   if (isMine(i, j)) {
     // console.log('case 1.1 - isMine');
@@ -109,15 +129,15 @@ const revealSquare = (i, j, rows, columns) => {
     // console.log('case 3 - counts is 0');
     for (let dx = i - 1; dx <= i + 1; dx++) {
       for (let dy = j - 1; dy <= j + 1; dy++) {
-        if (dx >= 0 && dx < rows && dy >= 0 && dy < columns) {
-          revealSquare(dx, dy, rows, columns);
+        if (dx >= 0 && dx < level.rows && dy >= 0 && dy < level.columns) {
+          revealSquare(dx, dy, level);
         }
       }
     }
   }
 };
 
-const handleClick = (e) => {
+const handleClick = (e, level) => {
   if (endOfGame) return;
   if (e.currentTarget.getAttribute('isRevealed') === 'true') return;
   if (e.button === 0) {
@@ -129,8 +149,7 @@ const handleClick = (e) => {
       revealSquare(
         parseInt(e.currentTarget.getAttribute('row')),
         parseInt(e.currentTarget.getAttribute('column')),
-        rows,
-        columns
+        level
       );
       if (numberOfRevealed === 90) {
         result = 'You win';
@@ -141,17 +160,17 @@ const handleClick = (e) => {
   if (e.button === 2) {
     flagTheSquare(e.currentTarget);
   }
-  getLegend();
+  getLegend(level);
 };
 
 let longPressTimer;
 
-function handleTouchStart(square) {
+function handleTouchStart(square, level) {
   longPressTimer = setTimeout(() => {
     if (endOfGame) return;
     if (square.getAttribute('isRevealed') === 'true') return;
     flagTheSquare(square);
-    getLegend();
+    getLegend(level);
   }, 300);
 }
 
@@ -179,12 +198,25 @@ const isMine = (i, j) => {
   }
 };
 
-const getLegend = () => {
-  document.getElementById('mines').innerHTML = numberOfMines - numberOfFlags;
+const getLegend = (level) => {
+  document.getElementById('mines').innerHTML =
+    level.numberOfMines - numberOfFlags;
   document.getElementById('result').innerHTML = result;
 };
 
-const startNewGame = () => {
+const initiateStartButtons = () => {
+  const beginnerButton = document.getElementById('beginner-start-button');
+  beginnerButton.addEventListener('click', () => startNewGame(Levels.BEGINNER));
+
+  const intermediateButton = document.getElementById(
+    'intermediate-start-button'
+  );
+  intermediateButton.addEventListener('click', () =>
+    startNewGame(Levels.INTERMEDIATE)
+  );
+};
+
+const startNewGame = (level) => {
   const container = document.querySelector('.container');
   const grid = document.querySelector('.grid');
   grid.remove();
@@ -194,21 +226,26 @@ const startNewGame = () => {
   newGrid.setAttribute('class', 'grid');
   container.insertBefore(newGrid, legend);
 
+  const levelSpecificGrid = document.createElement('div');
+  levelSpecificGrid.setAttribute('class', level.gridClass);
+  newGrid.appendChild(levelSpecificGrid);
+
   numberOfRevealed = 0;
   numberOfFlags = 0;
   endOfGame = false;
   result = '';
 
-  initiateGame();
+  initiateGame(level);
 };
 
-addEventListener('DOMContentLoaded', () => {
-  initiateGame();
+const initiateGame = (level) => {
+  createBoard(level);
+  getLegend(level);
+  setRandomMines(level);
+  calculateCounts(level);
+  initiateStartButtons();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  startNewGame(Levels.BEGINNER);
 });
-
-const initiateGame = () => {
-  createBoard(rows, columns);
-  getLegend();
-  setRandomMines(numberOfMines, rows, columns);
-  calculateCounts(rows, columns);
-};
