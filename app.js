@@ -168,7 +168,7 @@ function handleTouchStart(square, level) {
     if (square.getAttribute('isRevealed') === 'true') return;
     flagTheSquare(square);
     getLegend(level);
-  }, 200);
+  }, 300);
 }
 
 function handleTouchEnd() {
