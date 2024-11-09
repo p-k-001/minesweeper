@@ -27,6 +27,11 @@ const createBoard = (rows, columns) => {
       });
       square.addEventListener('mousedown', handleClick);
 
+      square.addEventListener('touchstart', (e) =>
+        handleTouchStart(e.currentTarget)
+      );
+      square.addEventListener('touchend', handleTouchEnd);
+
       grid.appendChild(square);
     }
   }
@@ -134,15 +139,34 @@ const handleClick = (e) => {
     }
   }
   if (e.button === 2) {
-    if (e.target.getAttribute('isFlag') === 'false') {
-      e.target.setAttribute('isFlag', 'true');
-      numberOfFlags++;
-    } else {
-      e.target.setAttribute('isFlag', 'false');
-      numberOfFlags--;
-    }
+    flagTheSquare(e.currentTarget);
   }
   getLegend();
+};
+
+let longPressTimer;
+
+function handleTouchStart(square) {
+  longPressTimer = setTimeout(() => {
+    if (endOfGame) return;
+    if (square.getAttribute('isRevealed') === 'true') return;
+    flagTheSquare(square);
+    getLegend();
+  }, 300);
+}
+
+function handleTouchEnd() {
+  clearTimeout(longPressTimer);
+}
+
+const flagTheSquare = (square) => {
+  if (square.getAttribute('isFlag') === 'false') {
+    square.setAttribute('isFlag', 'true');
+    numberOfFlags++;
+  } else {
+    square.setAttribute('isFlag', 'false');
+    numberOfFlags--;
+  }
 };
 
 const isMine = (i, j) => {
